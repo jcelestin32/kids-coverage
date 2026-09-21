@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>KIDS Weekly Coverage</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#0a0a0a;--card:#171717;--card2:#222;--line:#303030;--text:#fafafa;--muted:#aaa;--accent:#ffd400}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}.app{max-width:760px;margin:auto;padding:22px 16px 48px}
+.eyebrow,.section{font-size:12px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}.eyebrow{color:var(--accent)}.section{color:var(--muted);margin:24px 2px 10px}
+h1{font-size:28px;margin:5px 0}.sub,.small{color:var(--muted);font-size:13px}.toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:18px 0}.upload{background:var(--accent);color:#111;font-weight:900;border-radius:12px;padding:12px 15px;cursor:pointer}.upload input{display:none}
+select{background:var(--card);border:1px solid var(--line);color:var(--text);padding:11px;border-radius:12px;font:inherit}
+.hero,.card{background:var(--card);border:1px solid var(--line);border-radius:18px}.hero{padding:18px}.top{display:flex;justify-content:space-between;align-items:end;gap:10px}.pctbig{font-size:52px;font-weight:950;letter-spacing:-.06em}.barbg,.mini{background:#2b2b2b;border-radius:99px;overflow:hidden}.barbg{height:9px;margin:12px 0 17px}.bar,.minibar{height:100%;background:var(--accent)}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.metric{background:var(--card2);border-radius:13px;padding:12px;text-align:center}.metric b{display:block;font-size:24px}.metric span{font-size:10px;color:var(--muted);font-weight:900;letter-spacing:.08em}
+.cards{display:grid;gap:10px}.card{padding:15px}.head{display:flex;justify-content:space-between;align-items:center}.head b{font-size:17px}.yellow{color:var(--accent);font-weight:950}.mini{height:6px;margin-top:10px}
+.attn{display:grid;grid-template-columns:1fr auto;align-items:center}.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.filters select{width:100%;min-width:0}.role{display:grid;grid-template-columns:1fr auto;gap:8px}.role b{font-size:14px}.empty{padding:25px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:16px}.note{font-size:11px;color:#777;margin:8px 0 18px}.footer{text-align:center;color:#666;font-size:11px;margin-top:28px}
+@media(min-width:620px){.servicegrid{grid-template-columns:repeat(3,1fr)}}
+</style></head>
+<body><main class="app">
+<div class="eyebrow">First Orlando KIDS</div><h1>Weekly Coverage</h1><div class="sub" id="status">Upload your regular KIDS Weekly Coverage Excel file.</div>
+<div class="toolbar"><label class="upload">Upload Excel<input id="file" type="file" accept=".xlsx,.xls"></label></div>
+<div class="note">Designed for your existing workbook. It reads the <b>Coverage</b> tab automatically—no StaffingData tab required.</div>
+<section class="hero"><div class="top"><div><div class="pctbig" id="pct">—</div><div class="small">OVERALL COVERAGE</div></div><div class="sub" id="date">No file loaded</div></div>
+<div class="barbg"><div class="bar" id="bar" style="width:0"></div></div>
+<div class="metrics"><div class="metric"><b id="needed">—</b><span>NEEDED</span></div><div class="metric"><b id="scheduled">—</b><span>SCHEDULED</span></div><div class="metric"><b id="open">—</b><span>OPEN</span></div></div></section>
+<div class="section">Service Coverage</div><div class="cards servicegrid" id="services"><div class="empty">Upload the workbook to begin.</div></div>
+<div class="section">Needs Attention</div><div class="cards" id="attention"><div class="empty">Staffing gaps will appear here.</div></div>
+<div class="section">All Staffing</div><div class="filters"><select id="service"><option value="">All services</option></select><select id="area"><option value="">All areas</option></select></div>
+<div class="cards" id="roles"><div class="empty">Staffing roles will appear here.</div></div><div class="footer">KIDS Weekly Coverage Dashboard</div>
+</main>
+<script>
+let rows=[];const $=x=>document.getElementById(x), n=x=>Number(x)||0, t=x=>String(x??"").trim();
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const sum=(a,k)=>a.reduce((z,r)=>z+n(r[k]),0), pc=(s,need)=>need?Math.min(100,Math.round(s/need*100)):100;
+function fileDate(name){let m=name.match(/(\d{1,2})[_-](\d{1,2})[_-](\d{2,4})/);if(!m)return "Current Sunday";let y=m[3].length===2?2000+Number(m[3]):Number(m[3]);let d=new Date(y,Number(m[1])-1,Number(m[2]));return d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"})}
+function fillSelect(id,vals,label){$(id).innerHTML=`<option value="">${label}</option>`+vals.map(v=>`<option>${esc(v)}</option>`).join("")}
+function render(){
+ let need=sum(rows,"Total Needed"), sched=sum(rows,"Total Scheduled"), op=sum(rows,"Open Spots"), p=pc(sched,need);
+ $("needed").textContent=need;$("scheduled").textContent=sched;$("open").textContent=op;$("pct").textContent=p+"%";$("bar").style.width=p+"%";
+ let services=[...new Set(rows.map(r=>t(r.Service)).filter(Boolean))];
+ $("services").innerHTML=services.map(s=>{let a=rows.filter(r=>t(r.Service)===s),nn=sum(a,"Total Needed"),ss=sum(a,"Total Scheduled"),oo=sum(a,"Open Spots"),pp=pc(ss,nn);return `<div class="card"><div class="head"><b>${esc(s)}</b><span class="yellow">${pp}%</span></div><div class="small">${nn} needed • ${ss} scheduled • ${oo} open</div><div class="mini"><div class="minibar" style="width:${pp}%"></div></div></div>`}).join("");
+ let g={};rows.forEach(r=>{let k=t(r.Area)+"|||"+t(r.Service);if(!g[k])g[k]={area:t(r.Area),service:t(r.Service),open:0};g[k].open+=n(r["Open Spots"])});
+ let att=Object.values(g).filter(x=>x.open>0).sort((a,b)=>b.open-a.open).slice(0,8);
+ $("attention").innerHTML=att.map(x=>`<div class="card attn"><div><b>${esc(x.area)}</b><div class="small">${esc(x.service)}</div></div><div class="yellow">${x.open} OPEN</div></div>`).join("")||'<div class="empty">Fully staffed.</div>';
+ fillSelect("service",services,"All services");fillSelect("area",[...new Set(rows.map(r=>t(r.Area)).filter(Boolean))].sort(),"All areas");renderRoles()
+}
+function renderRoles(){let sf=$("service").value,af=$("area").value,a=rows.filter(r=>(!sf||t(r.Service)===sf)&&(!af||t(r.Area)===af)).sort((x,y)=>n(y["Open Spots"])-n(x["Open Spots"]));
+ $("roles").innerHTML=a.map(r=>`<div class="card role"><div><b>${esc(r["Room / Role"])}</b><div class="small">${esc(r.Area)} • ${esc(r.Service)} • ${n(r["Total Scheduled"])} / ${n(r["Total Needed"])} scheduled</div></div><div class="yellow">${n(r["Open Spots"])} open</div></div>`).join("")||'<div class="empty">No matching roles.</div>'}
+$("file").addEventListener("change",async e=>{let f=e.target.files[0];if(!f)return;try{let wb=XLSX.read(await f.arrayBuffer(),{type:"array"});let sn=wb.SheetNames.find(x=>x.toLowerCase()==="coverage");if(!sn)throw Error("Coverage tab not found.");
+ let raw=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:""});let hi=raw.findIndex(r=>t(r[0])==="Area"&&t(r[1])==="Room / Role");if(hi<0)throw Error("Coverage headers not found.");
+ let headers=raw[hi].map(t);rows=raw.slice(hi+1).filter(r=>t(r[0])&&t(r[2])).map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]])));
+ $("status").textContent=`Loaded ${f.name} • ${rows.length} staffing records`;$("date").textContent=fileDate(f.name);render()}catch(err){$("status").textContent="Could not load workbook: "+err.message}});
+$("service").addEventListener("change",renderRoles);$("area").addEventListener("change",renderRoles);
+</script></body></html>
