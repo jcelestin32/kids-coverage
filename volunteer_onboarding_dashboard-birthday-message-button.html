@@ -1,0 +1,294 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Volunteer Onboarding Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#070807;--panel:rgba(22,24,21,.72);--panel2:rgba(31,33,29,.68);--line:rgba(255,255,255,.08);--text:#f6f7f3;--muted:#9ca398;--gold:#f5c84c;--gold2:#ffd96a;--green:#36d17c;--red:#ff6868;--shadow:0 20px 70px rgba(0,0,0,.38);--glow:0 0 35px rgba(245,200,76,.13)}*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 500px at 75% -10%,rgba(245,200,76,.12),transparent 62%),linear-gradient(180deg,#090a09,#050605 60%);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;min-height:100vh}.wrap{max-width:1480px;margin:auto;padding:28px}.top{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:22px}.eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:800}.title{font-size:clamp(30px,5vw,58px);letter-spacing:-.045em;margin:4px 0 5px;font-weight:780}.sub{color:var(--muted);font-size:15px}.upload{display:flex;align-items:center;gap:10px}.btn{border:1px solid rgba(245,200,76,.28);background:rgba(245,200,76,.10);color:#ffe394;padding:11px 15px;border-radius:14px;font-weight:750;cursor:pointer;box-shadow:var(--glow);white-space:nowrap}.btn:hover{background:rgba(245,200,76,.16)}input[type=file]{display:none}.glass{background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.025));border:1px solid var(--line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:var(--shadow);border-radius:22px}.kpis{display:grid;grid-template-columns:repeat(7,1fr);gap:14px}.kpi{padding:20px;min-height:128px;position:relative;overflow:hidden}.kpi:after{content:"";position:absolute;width:100px;height:100px;border-radius:50%;background:rgba(245,200,76,.08);filter:blur(24px);right:-20px;top:-25px}.klabel{color:var(--muted);font-size:12px;font-weight:750;text-transform:uppercase;letter-spacing:.09em}.kval{font-size:42px;font-weight:800;letter-spacing:-.04em;margin-top:13px}.ksub{font-size:12px;color:var(--muted);margin-top:3px}.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-top:14px}.card{padding:20px}.card h2{font-size:16px;margin:0 0 4px;letter-spacing:-.01em}.hint{color:var(--muted);font-size:12px;margin-bottom:18px}.pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stage{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:16px;padding:15px}.stage strong{font-size:25px}.stage span{display:block;color:var(--muted);font-size:12px;margin-top:5px}.barrow{display:grid;grid-template-columns:135px 1fr 38px;align-items:center;gap:10px;margin:10px 0}.barlabel{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#d9ddd5;font-size:13px}.track{height:8px;background:rgba(255,255,255,.055);border-radius:99px;overflow:hidden}.fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#b78d21,var(--gold2));box-shadow:0 0 14px rgba(245,200,76,.22)}.barval{text-align:right;font-size:12px;color:var(--muted)}.controls{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}.control{background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:10px 12px;outline:none;min-width:150px}.search{flex:1;min-width:220px}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:16px;max-height:560px}table{border-collapse:collapse;width:100%;min-width:900px}th{position:sticky;top:0;background:#171916;color:#aeb5aa;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.07em;padding:12px;border-bottom:1px solid var(--line);z-index:2}td{padding:12px;border-bottom:1px solid rgba(255,255,255,.055);font-size:13px;color:#e6e9e3}tr:hover td{background:rgba(255,255,255,.025)}.pill{display:inline-flex;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800;background:rgba(245,200,76,.10);color:#f8d56b;border:1px solid rgba(245,200,76,.18)}.pill.green{background:rgba(54,209,124,.09);color:#72e9a5;border-color:rgba(54,209,124,.18)}.empty{padding:45px 20px;text-align:center;color:var(--muted)}.drop{margin-top:14px;padding:24px;border:1px dashed rgba(245,200,76,.22);text-align:center;color:var(--muted);border-radius:18px;background:rgba(245,200,76,.025)}.privacy{font-size:11px;color:#747b72;margin-top:10px}.footer{color:#656b63;font-size:11px;margin:16px 2px 0}.shadowgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.shadowcol{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:16px;padding:15px;min-height:150px}.shadowhead{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:12px}.shadowtitle{font-size:13px;font-weight:800}.shadowcount{font-size:11px;color:var(--gold);background:rgba(245,200,76,.10);border:1px solid rgba(245,200,76,.18);border-radius:999px;padding:4px 7px}.shadowperson{padding:9px 0;border-top:1px solid rgba(255,255,255,.055)}.shadowperson:first-of-type{border-top:0}.shadowname{font-size:13px;font-weight:750}.shadowmeta{font-size:11px;color:var(--muted);margin-top:2px}.msgbtn{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:7px 10px;border-radius:10px;border:1px solid rgba(245,200,76,.22);background:rgba(245,200,76,.09);color:#ffe394;text-decoration:none;font-size:11px;font-weight:800}.msgbtn:hover{background:rgba(245,200,76,.16)}.hide{display:none!important}@media(max-width:900px){.shadowgrid{grid-template-columns:repeat(2,1fr)}.wrap{padding:18px 14px 28px}.top{align-items:flex-start;flex-direction:column}.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.pipeline{grid-template-columns:repeat(2,1fr)}.kpi{min-height:112px}.kval{font-size:35px}.barrow{grid-template-columns:105px 1fr 32px}}@media(max-width:480px){.shadowgrid{grid-template-columns:1fr}.kpis{gap:9px}.kpi,.card{padding:16px;border-radius:18px}.pipeline{gap:8px}.stage{padding:12px}.title{font-size:37px}.sub{font-size:13px}.btn{width:100%;text-align:center}.upload{width:100%}}
+
+.tabs{display:flex;gap:8px;margin:0 0 18px;padding:5px;width:max-content;max-width:100%;overflow:auto;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:15px}.tabbtn{border:0;background:transparent;color:var(--muted);padding:10px 16px;border-radius:11px;font-weight:800;cursor:pointer;white-space:nowrap}.tabbtn.active{background:rgba(245,200,76,.13);color:#ffe394;box-shadow:0 0 22px rgba(245,200,76,.10)}.view.hide{display:none!important}.interestkpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}.areaGroup{margin-top:12px}.areaGroupTitle{font-size:12px;color:var(--gold);font-weight:850;text-transform:uppercase;letter-spacing:.08em;margin:12px 0 5px}@media(max-width:700px){.interestkpis{grid-template-columns:1fr}.tabs{width:100%}.tabbtn{flex:1}}
+</style></head><body><main class="wrap">
+<div class="top"><div><div class="eyebrow">First Orlando KIDS</div><h1 class="title">Volunteer Onboarding</h1><div class="sub" id="subtitle">A clear view of the volunteer pipeline.</div></div><div class="upload"><label class="btn" for="file">Upload Excel Workbook</label><input id="file" type="file" accept=".xlsx,.xls"></div></div>
+<div class="tabs"><button class="tabbtn active" id="tabOnboarding" type="button">Onboarding</button><button class="tabbtn" id="tabInterested" type="button">Interested</button><button class="tabbtn" id="tabCurrent" type="button">Current Volunteers</button></div>
+<div id="onboardingView" class="view"><section class="kpis"><div class="glass kpi"><div class="klabel">Interested</div><div class="kval" id="kInterested">—</div><div class="ksub">Awaiting / beginning contact</div></div><div class="glass kpi"><div class="klabel">Onboarding</div><div class="kval" id="kOnboarding">—</div><div class="ksub">Actively completing steps</div></div><div class="glass kpi"><div class="klabel">Avg. Onboarding Time</div><div class="kval" id="kAvgOnboardingDays">—</div><div class="ksub">Average days in Onboarding based on CCB date</div></div><div class="glass kpi"><div class="klabel">Interested + Onboarding</div><div class="kval" id="kInterestedOnboarding">—</div><div class="ksub">Total people in the active pipeline</div></div><div class="glass kpi"><div class="klabel">New This Month</div><div class="kval"><span id="kNewMonth">—</span></div><div class="ksub">New people added to Interested + Onboarding this month</div></div><div class="glass kpi"><div class="klabel">Shadows</div><div class="kval" id="kShadows">—</div><div class="ksub">People currently in shadowing stages</div></div><div class="glass kpi"><div class="klabel">Current</div><div class="kval" id="kCurrent">—</div><div class="ksub">Current volunteer records</div></div><div class="glass kpi"><div class="klabel">Offboarded</div><div class="kval" id="kOffboarded">—</div><div class="ksub">Archived / no longer active</div></div></section>
+<div id="empty" class="drop"><b style="color:#e9ecE5">Upload “Volunteer Onboarding” to populate the dashboard.</b><br><span style="font-size:12px">The workbook is processed in your browser. This page does not upload volunteer data to a server.</span></div>
+<div id="dash" class="hide"><section class="grid"><div class="glass card"><h2>Pipeline</h2><div class="hint">Adults and students currently in Interested + Onboarding</div><div class="pipeline" id="pipeline"></div></div><div class="glass card"><h2>Onboarding by Area</h2><div class="hint">Active onboarding load by ministry area</div><div id="areas"></div></div></section>
+<section class="grid"><div class="glass card"><h2>Staff Ownership</h2><div class="hint">Who is currently carrying onboarding follow-up</div><div id="staff"></div></div><div class="glass card"><h2>Onboarding Progress</h2><div class="hint">Average completed checklist steps across active onboarding records</div><div style="display:flex;align-items:center;gap:18px"><div id="progressNum" style="font-size:54px;font-weight:800;letter-spacing:-.05em">—</div><div style="flex:1"><div class="track" style="height:12px"><div class="fill" id="progressBar"></div></div><div class="privacy" id="progressMeta"></div></div></div></div></section>
+<section class="glass card" style="margin-top:14px"><h2>Application Not Completed</h2><div class="hint">People whose App Completed step is marked FALSE</div><div class="shadowgrid" id="appNotCompleted"></div></section>
+<section class="glass card" style="margin-top:14px"><h2>Next Steps</h2><div class="hint">Only includes people whose application is completed</div><div class="shadowgrid" id="preShadowStages"></div></section>
+<section class="glass card" style="margin-top:14px"><h2>Shadowing Stages</h2><div class="hint">See who is ready for each shadow and who has completed all three</div><div class="shadowgrid" id="shadowStages"></div></section>
+<section class="glass card" style="margin-top:14px"><h2>People in Onboarding</h2><div class="hint">Search, filter, and see the next incomplete step</div><div class="controls"><input id="search" class="control search" placeholder="Search name, area, staff…"><select id="areaFilter" class="control"><option value="">All areas</option></select><select id="staffFilter" class="control"><option value="">All staff</option></select></div><div class="tablewrap"><table><thead><tr><th>Name</th><th>Area</th><th>Adult / Student</th><th>Staff</th><th>Progress</th><th>Next Step</th></tr></thead><tbody id="tbody"></tbody></table></div></section></div>
+</div>
+<div id="interestedView" class="view hide">
+<section class="interestkpis">
+ <div class="glass kpi"><div class="klabel">Total Interested</div><div class="kval" id="iTotal">—</div><div class="ksub">People currently in the Interested tab</div></div><div class="glass kpi"><div class="klabel">Replied</div><div class="kval" id="iReplied">—</div><div class="ksub">Interested people marked as replied</div></div><div class="glass kpi"><div class="klabel">Avg. Queue Time</div><div class="kval" id="iAvgDays">—</div><div class="ksub">Average days in Interested based on CCB date</div></div><div class="glass kpi"><div class="klabel">Adults</div><div class="kval" id="iAdults">—</div><div class="ksub">From ADULT / STUDENT column</div></div><div class="glass kpi"><div class="klabel">Students</div><div class="kval" id="iStudents">—</div><div class="ksub">From ADULT / STUDENT column</div></div>
+ 
+ 
+</section>
+<section class="glass card" style="margin-top:14px"><h2>Staff Ownership</h2><div class="hint">Based on INITIAL STAFF CONTACT</div><div id="interestedStaff"></div></section>
+<section class="glass card" style="margin-top:14px"><h2>Contact Tracking</h2><div class="hint">Tracks FIRST CONTACT, SECOND CONTACT, and THIRD CONTACT from the Interested tab</div><div class="pipeline" id="contactTracking"></div></section>
+<section class="glass card" style="margin-top:14px"><h2>Interested People</h2><div class="hint">Grouped by contact status • CCB date, days, and months shown when available</div><div class="controls" style="margin-top:0"><select id="interestedSort" class="control"><option value="days-desc">Days in queue: High to Low</option><option value="days-asc">Days in queue: Low to High</option><option value="name-asc">Name: A to Z</option><option value="name-desc">Name: Z to A</option><option value="replied-desc">Replied: Yes first</option><option value="replied-asc">Replied: No first</option></select><select id="interestedTypeFilter" class="control"><option value="">All Adults & Students</option><option value="Adult">Adults</option><option value="Student">Students</option></select></div><div class="shadowgrid" id="interestedPeople"></div></section>
+</div>
+<div id="currentView" class="view hide">
+<section class="glass card" style="margin-bottom:14px">
+<h2>Contact This Week</h2>
+<div class="hint">Current volunteers with a birthday this week</div>
+<div class="shadowgrid" id="birthdaysThisWeek"></div>
+</section>
+<section class="glass card">
+<h2>Current Volunteers</h2>
+<div class="hint">Names, birthdays, and ages organized by birthday month</div>
+<div class="controls" style="margin-top:0">
+<input id="currentSearch" class="control search" placeholder="Search volunteer name…">
+<select id="birthdayMonthFilter" class="control">
+<option value="">All birthday months</option>
+<option value="0">January</option><option value="1">February</option><option value="2">March</option>
+<option value="3">April</option><option value="4">May</option><option value="5">June</option>
+<option value="6">July</option><option value="7">August</option><option value="8">September</option>
+<option value="9">October</option><option value="10">November</option><option value="11">December</option>
+</select>
+</div>
+<div class="shadowgrid" id="currentVolunteerMonths"></div>
+</section>
+</div>
+<div class="footer">Dashboard reads the Interested, Onboarding, Current, and Offboarded tabs automatically.</div></main>
+<script>
+const $=id=>document.getElementById(id); let people=[]; let interestedPeopleData=[]; let currentVolunteerData=[];
+const clean=s=>String(s??'').replace(/^\.\s*/,'').trim();
+function sheetRows(wb,name){const ws=wb.Sheets[name];if(!ws)return[];return XLSX.utils.sheet_to_json(ws,{defval:null,raw:true});}
+function val(row,key){for(const k of Object.keys(row)){if(clean(k).toLowerCase()===key.toLowerCase())return row[k]}return null}
+function nameOf(r){return [val(r,'FIRST NAME'),val(r,'LAST NAME')].filter(Boolean).join(' ').trim()}
+function realRows(rows){return rows.filter(r=>nameOf(r));}
+const stepNames=['Audit','APP Sent','App Completed','APP Approved','BGC Requested','BGC Clear','Serve HQ Sent','Serve HQ Completed','C.O.C Sent','C.O.C. Completed','Involvement Verified','Social Media Reviewed','References Contacted','Reference 1 Uploaded','Reference 2 Uploaded','Interview Scheduled','Interview Completed','Interview Notes (App)','ID Verified','ALL  STEPS COMPLETE','CCB Sig. Event & Notes','CCB Profile Photo','Orientation Completed','Shadow 1 Completed','Shadow 2 Completed','Shadow 3 Completed','CCB Add to Schedule','CCB Add to Groups'];
+function completed(r,s){const x=val(r,s);return x===true||x===1||String(x).toLowerCase()==='true'}
+const nextStepNames=['BGC Clear','Serve HQ Completed','C.O.C. Completed','References Contacted','Shadow 1 Completed','Shadow 2 Completed','Shadow 3 Completed'];
+function nextStep(r){for(const s of nextStepNames){const x=val(r,s);if(x===false||x===0||String(x).trim().toLowerCase()==='false')return ({'BGC Clear':'BGC','Serve HQ Completed':'Serve HQ','C.O.C. Completed':'Code of Conduct','References Contacted':'References Contacted','Shadow 1 Completed':'Shadow 1','Shadow 2 Completed':'Shadow 2','Shadow 3 Completed':'Shadow 3'})[s]}return 'Complete'}
+function progress(r){let n=stepNames.filter(s=>completed(r,s)).length;return {n,total:stepNames.length,p:Math.round(n/stepNames.length*100)}}
+function counts(arr,key){const m={};arr.forEach(r=>{let x=val(r,key)||'Unassigned';x=String(x).trim()||'Unassigned';m[x]=(m[x]||0)+1});return m}
+function bars(el,obj){let entries=Object.entries(obj).sort((a,b)=>b[1]-a[1]);let max=Math.max(1,...entries.map(x=>x[1]));$(el).innerHTML=entries.length?entries.map(([k,v])=>`<div class="barrow"><div class="barlabel" title="${esc(k)}">${esc(k)}</div><div class="track"><div class="fill" style="width:${v/max*100}%"></div></div><div class="barval">${v}</div></div>`).join(''):'<div class="empty">No data</div>'}
+function esc(x){return String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function fillSelect(id,items,label){$(id).innerHTML=`<option value="">All ${label}</option>`+items.sort().map(x=>`<option>${esc(x)}</option>`).join('')}
+function isFalse(r,s){const x=val(r,s);return x===false||x===0||String(x).trim().toLowerCase()==='false'}
+function renderAppNotCompleted(arr){
+ const list=arr.filter(r=>isFalse(r,'App Completed')).sort((a,b)=>{const aa=String(val(a,'AREA')||'Unassigned'),bb=String(val(b,'AREA')||'Unassigned');return aa.localeCompare(bb)||nameOf(a).localeCompare(nameOf(b))});
+ const byArea={}; list.forEach(r=>{const a=String(val(r,'AREA')||'Unassigned');(byArea[a]??=[]).push(r)}); $('appNotCompleted').innerHTML=list?Object.entries(byArea).map(([area,people])=>`<div class="shadowcol"><div class="shadowhead"><div class="shadowtitle">${esc(area)}</div><div class="shadowcount">${people.length}</div></div>${people.map(r=>`<div class="shadowperson"><div class="shadowname">${esc(nameOf(r))}</div>${adultStudentType(r)?`<div class="shadowmeta">${esc(adultStudentType(r))}</div>`:''}<div class="shadowmeta">${esc(val(r,'STAFF ONBOARDING')||'Unassigned')}</div>${dateLine(r,'App Completed')}</div>`).join('')}</div>`).join(''):'<div class="shadowmeta">No one waiting on application</div>';
+}
+function falseStep(r,steps){for(const s of steps){const x=val(r,s);if(x===false||x===0||String(x).trim().toLowerCase()==='false')return s}return null}
+function preShadowNextStep(r){return falseStep(r,['BGC Requested','BGC Clear','Serve HQ Sent','Serve HQ Completed','C.O.C Sent','C.O.C. Completed','References Contacted','Reference 1 Uploaded','Reference 2 Uploaded'])}
+
+function formatDateValue(x){if(x==null||x==='')return '';let d=x instanceof Date?x:new Date(x);if(!isNaN(d))return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});return String(x).trim()}
+function dateFor(r,step=''){return formatDateValue(val(r,'CCB (PASTE HERE)'))}
+function monthsSinceDateValue(x){
+ if(x==null||x==='')return '';
+ let d=x instanceof Date?x:new Date(x);
+ if(isNaN(d))return '';
+ let now=new Date();
+ let months=(now.getFullYear()-d.getFullYear())*12+(now.getMonth()-d.getMonth());
+ if(now.getDate()<d.getDate())months--;
+ if(months<0)return '0 months';
+ return months===1?'1 month':`${months} months`;
+}
+function daysSinceDateValue(x){if(x==null||x==='')return '';let d=x instanceof Date?x:new Date(x);if(isNaN(d))return '';let now=new Date();d=new Date(d.getFullYear(),d.getMonth(),d.getDate());now=new Date(now.getFullYear(),now.getMonth(),now.getDate());let days=Math.floor((now-d)/86400000);if(days<0)days=0;return days===1?'1 day':`${days} days`}
+function dateLine(r,step=''){let raw=step==='Interested'?val(r,'CCB'):val(r,'CCB (PASTE HERE)'),d=formatDateValue(raw),days=daysSinceDateValue(raw),m=monthsSinceDateValue(raw);return d?`<div class="shadowmeta" style="margin-top:4px">Date: ${esc(d)}${days?` • ${esc(days)}`:''}${m?` • ${esc(m)}`:''}</div>`:''}
+
+function renderPreShadowStages(arr){
+const groups=[
+ {title:'BGC',step:'BGC'},
+ {title:'Serve HQ',step:'Serve HQ'},
+ {title:'Code of Conduct',step:'Code of Conduct'},
+ {title:'References Contacted',step:'References Contacted'}
+];
+$('preShadowStages').innerHTML=groups.map(g=>{let list=arr.filter(r=>completed(r,'App Completed')&&nextStep(r)===g.step).sort((a,b)=>{const aa=String(val(a,'AREA')||'Unassigned'),ba=String(val(b,'AREA')||'Unassigned');return aa.localeCompare(ba)||nameOf(a).localeCompare(nameOf(b))});return `<div class="shadowcol"><div class="shadowhead"><div class="shadowtitle">${g.title}</div><div class="shadowcount">${list.length}</div></div>${list.length?list.map(r=>`<div class="shadowperson"><div class="shadowname">${esc(nameOf(r))}</div>${adultStudentType(r)?`<div class="shadowmeta">${esc(adultStudentType(r))}</div>`:''}<div class="shadowmeta">${esc(val(r,'AREA')||'Unassigned')} • ${esc(val(r,'STAFF ONBOARDING')||'Unassigned')}</div>${dateLine(r,g.step)}</div>`).join(''):'<div class="shadowmeta">No one at this step</div>'}</div>`}).join('');
+}
+function renderShadowStages(arr){
+const groups=[
+ {title:'Ready for Shadow 1',test:r=>completed(r,'Orientation Completed')&&!completed(r,'Shadow 1 Completed')},
+ {title:'Ready for Shadow 2',test:r=>completed(r,'Shadow 1 Completed')&&!completed(r,'Shadow 2 Completed')},
+ {title:'Ready for Shadow 3',test:r=>completed(r,'Shadow 2 Completed')&&!completed(r,'Shadow 3 Completed')},
+ {title:'Shadowing Complete',test:r=>completed(r,'Shadow 3 Completed')}
+];
+$('shadowStages').innerHTML=groups.map(g=>{let list=arr.filter(g.test).sort((a,b)=>{const aa=String(val(a,'AREA')||'Unassigned'),ba=String(val(b,'AREA')||'Unassigned');return aa.localeCompare(ba)||nameOf(a).localeCompare(nameOf(b))});return `<div class="shadowcol"><div class="shadowhead"><div class="shadowtitle">${g.title}</div><div class="shadowcount">${list.length}</div></div>${list.length?list.map(r=>`<div class="shadowperson"><div class="shadowname">${esc(nameOf(r))}</div>${adultStudentType(r)?`<div class="shadowmeta">${esc(adultStudentType(r))}</div>`:''}<div class="shadowmeta" style="color:#d8bd68;margin-top:4px">Next Step: ${esc(nextStep(r))}</div><div class="shadowmeta">${esc(val(r,'AREA')||'Unassigned')} • ${esc(val(r,'STAFF ONBOARDING')||'Unassigned')}</div>${dateLine(r,g.title)}</div>`).join(''):'<div class="shadowmeta">No one at this stage</div>'}</div>`}).join('');
+}
+function renderTable(){let q=$('search').value.toLowerCase(),af=$('areaFilter').value,sf=$('staffFilter').value;let list=people.filter(r=>{let a=String(val(r,'AREA')||'Unassigned'),s=String(val(r,'STAFF ONBOARDING')||'Unassigned'),n=nameOf(r);return(!af||a===af)&&(!sf||s===sf)&&(!q||`${n} ${a} ${s}`.toLowerCase().includes(q))});$('tbody').innerHTML=list.length?list.map(r=>{let p=progress(r),next=nextStep(r),done=next==='Complete';return `<tr><td><b>${esc(nameOf(r))}</b></td><td>${esc(val(r,'AREA')||'—')}</td><td>${esc(val(r,'ADULT / STUDENT')||val(r,'Column3')||'—')}</td><td>${esc(val(r,'STAFF ONBOARDING')||'Unassigned')}</td><td><span class="pill ${p.p===100?'green':''}">${p.p}%</span></td><td>${done?'<span class="pill green">Complete</span>':esc(next)}</td></tr>`}).join(''):'<tr><td colspan="6" class="empty">No matching records</td></tr>'}
+
+function onboardingQueueDays(r){
+ const raw=val(r,'CCB (PASTE HERE)');
+ if(raw==null||raw==='') return null;
+ let d=raw instanceof Date?raw:new Date(raw);
+ if(isNaN(d)) return null;
+ let now=new Date();
+ d=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+ now=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+ return Math.max(0,Math.floor((now-d)/86400000));
+}
+function isCurrentMonthDate(x){
+ if(x==null||x==='') return false;
+ const d=x instanceof Date?x:new Date(x);
+ if(isNaN(d)) return false;
+ const now=new Date();
+ return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
+}
+function monthsNumber(x){if(x==null||x==='')return null;let d=x instanceof Date?x:new Date(x);if(isNaN(d))return null;let now=new Date();let months=(now.getFullYear()-d.getFullYear())*12+(now.getMonth()-d.getMonth());if(now.getDate()<d.getDate())months--;return Math.max(0,months)}
+function renderInterested(arr){
+ interestedPeopleData=arr;
+ $('iTotal').textContent=arr.length;$('iReplied').textContent=arr.filter(r=>completed(r,'REPLIED')).length;
+ const queueDayValues=arr.map(r=>interestedQueueDays(r)).filter(x=>x!==null);
+ $('iAvgDays').textContent=queueDayValues.length?Math.round(queueDayValues.reduce((a,b)=>a+b,0)/queueDayValues.length):'—';
+ const typeValues=arr.map(adultStudentType);
+ $('iAdults').textContent=typeValues.filter(x=>x==='Adult').length;
+ $('iStudents').textContent=typeValues.filter(x=>x==='Student').length;
+ bars('interestedStaff',counts(arr,'INITIAL STAFF CONTACT'));
+ const contactDefs=[['First Contact','FIRST CONTACT'],['Second Contact','SECOND CONTACT'],['Third Contact','THIRD CONTACT']]; const isMarked=x=>x===true||x===1||String(x??'').trim().toLowerCase()==='true'; $('contactTracking').innerHTML=contactDefs.map(([label,key])=>{const done=arr.filter(r=>isMarked(val(r,key))).length; const remaining=arr.length-done; return `<div class="stage"><strong>${done}</strong><span>${label} completed</span><div class="shadowmeta" style="margin-top:7px">${remaining} remaining</div></div>`}).join('');
+ renderInterestedPeopleGroups(arr,interestedContactGroups());
+}
+
+function adultStudentType(r){
+ // Find the Adult / Student column even if Excel adds dots, spaces, or odd formatting.
+ let raw='';
+ for(const k of Object.keys(r)){
+   const normalized=String(k).toLowerCase().replace(/[^a-z0-9]/g,'');
+   if(normalized==='adultstudent'){
+     raw=String(r[k]??'').trim().toLowerCase();
+     break;
+   }
+ }
+ if(!raw) raw=String(val(r,'ADULT / STUDENT')??'').trim().toLowerCase();
+ if(raw.includes('adult') || raw==='a') return 'Adult';
+ if(raw.includes('student') || raw==='s') return 'Student';
+ return '';
+}
+function interestedType(r){return adultStudentType(r);}
+function interestedQueueDays(r){const raw=val(r,'CCB');if(raw==null||raw==='')return null;let d=raw instanceof Date?raw:new Date(raw);if(isNaN(d))return null;let now=new Date();d=new Date(d.getFullYear(),d.getMonth(),d.getDate());now=new Date(now.getFullYear(),now.getMonth(),now.getDate());return Math.max(0,Math.floor((now-d)/86400000))}
+function sortInterestedList(list){const mode=$('interestedSort')?.value||'days-desc';return [...list].sort((a,b)=>{if(mode==='name-asc')return nameOf(a).localeCompare(nameOf(b));if(mode==='name-desc')return nameOf(b).localeCompare(nameOf(a));if(mode==='replied-desc'){const ar=completed(a,'REPLIED')?1:0,br=completed(b,'REPLIED')?1:0;return br-ar||nameOf(a).localeCompare(nameOf(b));}if(mode==='replied-asc'){const ar=completed(a,'REPLIED')?1:0,br=completed(b,'REPLIED')?1:0;return ar-br||nameOf(a).localeCompare(nameOf(b));}const ad=interestedQueueDays(a),bd=interestedQueueDays(b);if(ad===null&&bd===null)return nameOf(a).localeCompare(nameOf(b));if(ad===null)return 1;if(bd===null)return -1;return mode==='days-asc'?(ad-bd||nameOf(a).localeCompare(nameOf(b))):(bd-ad||nameOf(a).localeCompare(nameOf(b)))});}
+function interestedContactGroups(){
+ const isMarked=x=>x===true||x===1||String(x??'').trim().toLowerCase()==='true';
+ const isFalse=x=>x===false||x===0||String(x??'').trim().toLowerCase()==='false';
+ return [
+  {title:'Not Contacted',test:r=>isFalse(val(r,'FIRST CONTACT'))&&isFalse(val(r,'SECOND CONTACT'))&&isFalse(val(r,'THIRD CONTACT'))},
+  {title:'1st Contact',test:r=>isMarked(val(r,'FIRST CONTACT'))&&!isMarked(val(r,'SECOND CONTACT'))&&!isMarked(val(r,'THIRD CONTACT'))},
+  {title:'2nd Contact',test:r=>isMarked(val(r,'FIRST CONTACT'))&&isMarked(val(r,'SECOND CONTACT'))&&!isMarked(val(r,'THIRD CONTACT'))},
+  {title:'3rd Contact',test:r=>isMarked(val(r,'FIRST CONTACT'))&&isMarked(val(r,'SECOND CONTACT'))&&isMarked(val(r,'THIRD CONTACT'))}
+ ];
+}
+function renderInterestedPeopleGroups(arr,groups=interestedContactGroups()){$('interestedPeople').innerHTML=groups.map(g=>{const typeFilter=$('interestedTypeFilter')?.value||'';const list=sortInterestedList(arr.filter(r=>g.test(r)&&(!typeFilter||interestedType(r).toLowerCase()===typeFilter.toLowerCase())));return `<div class="shadowcol"><div class="shadowhead"><div class="shadowtitle">${g.title}</div><div class="shadowcount">${list.length}</div></div>${list.length?list.map(r=>`<div class="shadowperson"><div class="shadowname">${esc(nameOf(r))}${completed(r,'REPLIED')?' <span title="Replied" style="color:var(--gold);font-size:11px;margin-left:4px">★</span>':''}</div>${(()=>{const area=val(r,'AREA'),staff=val(r,'INITIAL STAFF CONTACT'),type=interestedType(r);const parts=[area,staff].filter(x=>x!=null&&String(x).trim()!==''&&String(x).trim().toLowerCase()!=='unassigned');return `${type?`<div class="shadowmeta">${esc(type)}</div>`:''}${parts.length?`<div class="shadowmeta">${parts.map(esc).join(' • ')}</div>`:''}`})()}${dateLine(r,'Interested')}</div>`).join(''):'<div class="shadowmeta">No one at this contact step</div>'}</div>`}).join('');}
+
+function birthdayValue(r){
+ const candidates=['BIRTHDAY','BIRTH DATE','DATE OF BIRTH','DOB'];
+ for(const key of candidates){const x=val(r,key);if(x!=null&&x!=='')return x;}
+ return null;
+}
+function birthdayDate(r){
+ const x=birthdayValue(r);if(x==null||x==='')return null;
+ if(x instanceof Date&&!isNaN(x))return x;
+ if(typeof x==='number'){
+   const parsed=XLSX.SSF.parse_date_code(x);
+   if(parsed)return new Date(parsed.y,parsed.m-1,parsed.d);
+ }
+ const d=new Date(x);return isNaN(d)?null:d;
+}
+function volunteerAge(r){
+ const d=birthdayDate(r);if(!d)return null;
+ const now=new Date();let age=now.getFullYear()-d.getFullYear();
+ const beforeBirthday=(now.getMonth()<d.getMonth())||(now.getMonth()===d.getMonth()&&now.getDate()<d.getDate());
+ if(beforeBirthday)age--;
+ return age>=0&&age<120?age:null;
+}
+function birthdayDisplay(r){
+ const d=birthdayDate(r);if(!d)return '';
+ return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+
+function phoneOf(r){
+ const candidates=['MOBILE PHONE','MOBILE','CELL PHONE','CELL','PHONE','PHONE NUMBER'];
+ for(const key of candidates){
+   const x=val(r,key);
+   if(x!=null&&String(x).trim()!=='')return String(x).trim();
+ }
+ // Flexible fallback for headers with punctuation/spacing.
+ for(const k of Object.keys(r)){
+   const nk=String(k).toLowerCase().replace(/[^a-z0-9]/g,'');
+   if(['mobilephone','mobile','cellphone','cell','phone','phonenumber'].includes(nk)){
+     const x=r[k]; if(x!=null&&String(x).trim()!=='')return String(x).trim();
+   }
+ }
+ return '';
+}
+function smsLink(r){
+ const raw=phoneOf(r);if(!raw)return '';
+ const digits=raw.replace(/\D/g,'');
+ return digits?`sms:${digits}`:'';
+}
+function birthdayThisWeek(r){
+ const b=birthdayDate(r);if(!b)return false;
+ const now=new Date();
+ const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+ const day=today.getDay();
+ const start=new Date(today);start.setDate(today.getDate()-day);
+ const end=new Date(start);end.setDate(start.getDate()+6);
+ // Compare this year's birthday, handling birthdays near year boundaries.
+ for(const y of [today.getFullYear()-1,today.getFullYear(),today.getFullYear()+1]){
+   const occurrence=new Date(y,b.getMonth(),b.getDate());
+   if(occurrence>=start&&occurrence<=end)return true;
+ }
+ return false;
+}
+function renderBirthdaysThisWeek(arr){
+ const list=arr.filter(birthdayThisWeek).sort((a,b)=>{
+   const ad=birthdayDate(a),bd=birthdayDate(b);
+   const now=new Date(),y=now.getFullYear();
+   const ao=new Date(y,ad.getMonth(),ad.getDate()),bo=new Date(y,bd.getMonth(),bd.getDate());
+   return ao-bo||nameOf(a).localeCompare(nameOf(b));
+ });
+ $('birthdaysThisWeek').innerHTML=list.length?list.map(r=>{
+   const age=volunteerAge(r);
+   const sms=smsLink(r);return `<div class="shadowcol"><div class="shadowperson" style="padding-top:0"><div class="shadowname">${esc(nameOf(r))}</div><div class="shadowmeta">Birthday: ${esc(birthdayDisplay(r))}${age!==null?` • Age ${age}`:''}</div>${sms?`<a class="msgbtn" href="${esc(sms)}">Message</a>`:`<div class="shadowmeta" style="margin-top:7px">No phone number available</div>`}</div></div>`;
+ }).join(''):'<div class="empty">No volunteer birthdays this week.</div>';
+}
+function renderCurrentVolunteers(arr){
+ currentVolunteerData=arr;
+ const q=($('currentSearch')?.value||'').trim().toLowerCase();
+ const mf=$('birthdayMonthFilter')?.value??'';
+ const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+ const groups=monthNames.map((title,i)=>({title,i,people:[]}));
+ arr.forEach(r=>{
+   const d=birthdayDate(r);if(!d)return;
+   if(q&&!nameOf(r).toLowerCase().includes(q))return;
+   if(mf!==''&&d.getMonth()!==Number(mf))return;
+   groups[d.getMonth()].people.push(r);
+ });
+ const visible=groups.filter(g=>g.people.length);
+ $('currentVolunteerMonths').innerHTML=visible.length?visible.map(g=>{
+   g.people.sort((a,b)=>birthdayDate(a).getDate()-birthdayDate(b).getDate()||nameOf(a).localeCompare(nameOf(b)));
+   return `<div class="shadowcol"><div class="shadowhead"><div class="shadowtitle">${g.title}</div><div class="shadowcount">${g.people.length}</div></div>${g.people.map(r=>{const age=volunteerAge(r);return `<div class="shadowperson"><div class="shadowname">${esc(nameOf(r))}</div><div class="shadowmeta">Birthday: ${esc(birthdayDisplay(r))}${age!==null?` • Age ${age}`:''}</div></div>`}).join('')}</div>`;
+ }).join(''):'<div class="empty">No birthday data found in the Current tab.</div>';
+}
+function showView(which){
+ const onboarding=which==='onboarding',interested=which==='interested',current=which==='current';
+ $('onboardingView').classList.toggle('hide',!onboarding);
+ $('interestedView').classList.toggle('hide',!interested);
+ $('currentView').classList.toggle('hide',!current);
+ $('tabOnboarding').classList.toggle('active',onboarding);
+ $('tabInterested').classList.toggle('active',interested);
+ $('tabCurrent').classList.toggle('active',current);
+}
+$('tabOnboarding').addEventListener('click',()=>showView('onboarding')); $('tabInterested').addEventListener('click',()=>showView('interested')); $('tabCurrent').addEventListener('click',()=>showView('current')); $('currentSearch').addEventListener('input',()=>renderCurrentVolunteers(currentVolunteerData)); $('birthdayMonthFilter').addEventListener('change',()=>renderCurrentVolunteers(currentVolunteerData)); $('interestedSort').addEventListener('change',()=>renderInterestedPeopleGroups(interestedPeopleData)); $('interestedTypeFilter').addEventListener('change',()=>renderInterestedPeopleGroups(interestedPeopleData));
+function build(wb,fileName){let I=realRows(sheetRows(wb,'Interested')),O=realRows(sheetRows(wb,'Onboarding')),C=realRows(sheetRows(wb,'Current')),F=realRows(sheetRows(wb,'Offboarded'));people=O;currentVolunteerData=C;renderInterested(I);renderBirthdaysThisWeek(C);renderCurrentVolunteers(C);$('kInterested').textContent=I.length;$('kOnboarding').textContent=O.length;
+ const onboardingDayValues=O.map(onboardingQueueDays).filter(x=>x!==null);
+ $('kAvgOnboardingDays').textContent=onboardingDayValues.length?Math.round(onboardingDayValues.reduce((a,b)=>a+b,0)/onboardingDayValues.length):'—';$('kInterestedOnboarding').textContent=I.length+O.length;
+ const newThisMonth =
+   I.filter(r=>isCurrentMonthDate(val(r,'CCB'))).length +
+   O.filter(r=>isCurrentMonthDate(val(r,'CCB (PASTE HERE)'))).length;
+ $('kNewMonth').textContent=newThisMonth;$('kCurrent').textContent=C.length;$('kOffboarded').textContent=F.length;
+ const shadowTotal=O.filter(r=>
+   (completed(r,'Orientation Completed')&&!completed(r,'Shadow 1 Completed')) ||
+   (completed(r,'Shadow 1 Completed')&&!completed(r,'Shadow 2 Completed')) ||
+   (completed(r,'Shadow 2 Completed')&&!completed(r,'Shadow 3 Completed')) ||
+   completed(r,'Shadow 3 Completed')
+ ).length;
+ $('kShadows').textContent=shadowTotal;const pipelineAdults=[...I,...O].filter(r=>adultStudentType(r)==='Adult').length;
+const pipelineStudents=[...I,...O].filter(r=>adultStudentType(r)==='Student').length;
+$('pipeline').innerHTML=[
+ ['Adults',pipelineAdults],
+ ['Students',pipelineStudents],
+ ['Total',I.length+O.length]
+].map(([n,v])=>`<div class="stage"><strong>${v}</strong><span>${n}</span></div>`).join('');bars('areas',counts(O,'AREA'));bars('staff',counts(O,'STAFF ONBOARDING'));let avg=O.length?Math.round(O.reduce((a,r)=>a+progress(r).p,0)/O.length):0;$('progressNum').textContent=avg+'%';$('progressBar').style.width=avg+'%';$('progressMeta').textContent=`${O.length} active onboarding record${O.length===1?'':'s'} • ${stepNames.length} tracked steps`;fillSelect('areaFilter',[...new Set(O.map(r=>String(val(r,'AREA')||'Unassigned')))],'areas');fillSelect('staffFilter',[...new Set(O.map(r=>String(val(r,'STAFF ONBOARDING')||'Unassigned')))],'staff');renderAppNotCompleted(O);renderPreShadowStages(O);renderShadowStages(O);renderTable();$('empty').classList.add('hide');$('dash').classList.remove('hide');$('subtitle').textContent=`Live view from ${fileName}`}
+$('file').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{let data=await f.arrayBuffer();let wb=XLSX.read(data,{type:'array',cellDates:true});build(wb,f.name)}catch(err){alert('Could not read this workbook. Make sure it is a valid Excel file.');console.error(err)}});['search','areaFilter','staffFilter'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',renderTable));
+</script></body></html>
