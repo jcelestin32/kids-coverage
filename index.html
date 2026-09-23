@@ -88,23 +88,74 @@ function monthsSinceDateValue(x){
 function daysSinceDateValue(x){if(x==null||x==='')return '';let d=x instanceof Date?x:new Date(x);if(isNaN(d))return '';let now=new Date();d=new Date(d.getFullYear(),d.getMonth(),d.getDate());now=new Date(now.getFullYear(),now.getMonth(),now.getDate());let days=Math.floor((now-d)/86400000);if(days<0)days=0;return days===1?'1 day':`${days} days`}
 function dateLine(r,step=''){let raw=step==='Interested'?val(r,'CCB'):val(r,'CCB (PASTE HERE)'),d=formatDateValue(raw),days=daysSinceDateValue(raw),m=monthsSinceDateValue(raw);return d?`<div class="shadowmeta" style="margin-top:4px">Date: ${esc(d)}${days?` • ${esc(days)}`:''}${m?` • ${esc(m)}`:''}</div>`:''}
 
+
+function isExplicitFalseValue(x){
+ return x===false||x===0||String(x??'').trim().toLowerCase()==='false';
+}
+function hasValue(x){return x!==null&&x!==undefined&&String(x).trim()!=='';}
+function needsStep(r,key){
+ const x=val(r,key);
+ return isExplicitFalseValue(x);
+}
+function onboardingStage(r){
+ if(!completed(r,'App Completed')) return 'Application';
+
+ // ALL STEPS COMPLETE is the handoff into shadowing.
+ // Once TRUE, do not push someone backward because an individual
+ // BGC / Serve HQ / C.O.C. / reference field is blank or FALSE.
+ if(completed(r,'ALL  STEPS COMPLETE')){
+   if(!completed(r,'Shadow 1 Completed')) return 'Shadow 1';
+   if(!completed(r,'Shadow 2 Completed')) return 'Shadow 2';
+   if(!completed(r,'Shadow 3 Completed')) return 'Shadow 3';
+   return 'Shadowing Complete';
+ }
+
+ const type=adultStudentType(r);
+ const isStudent=type==='Student';
+
+ if(!isStudent && needsStep(r,'BGC Clear')) return 'BGC';
+ if(!isStudent && needsStep(r,'Serve HQ Completed')) return 'Serve HQ';
+ if(!isStudent && needsStep(r,'C.O.C. Completed')) return 'Code of Conduct';
+
+ if(needsStep(r,'References Contacted') ||
+    needsStep(r,'Reference 1 Uploaded') ||
+    needsStep(r,'Reference 2 Uploaded')) return 'References Contacted';
+
+ // Fallback: if no applicable pre-shadow step is FALSE, begin shadowing.
+ if(!completed(r,'Shadow 1 Completed')) return 'Shadow 1';
+ if(!completed(r,'Shadow 2 Completed')) return 'Shadow 2';
+ if(!completed(r,'Shadow 3 Completed')) return 'Shadow 3';
+ return 'Shadowing Complete';
+}
 function renderPreShadowStages(arr){
-const groups=[
- {title:'BGC',step:'BGC'},
- {title:'Serve HQ',step:'Serve HQ'},
- {title:'Code of Conduct',step:'Code of Conduct'},
- {title:'References Contacted',step:'References Contacted'}
-];
-$('preShadowStages').innerHTML=groups.map(g=>{let list=arr.filter(r=>completed(r,'App Completed')&&nextStep(r)===g.step).sort((a,b)=>{const aa=String(val(a,'AREA')||'Unassigned'),ba=String(val(b,'AREA')||'Unassigned');return aa.localeCompare(ba)||nameOf(a).localeCompare(nameOf(b))});return `<div class="shadowcol"><div class="shadowhead"><div class="shadowtitle">${g.title}</div><div class="shadowcount">${list.length}</div></div>${list.length?list.map(r=>`<div class="shadowperson"><div class="shadowname">${esc(nameOf(r))}</div>${adultStudentType(r)?`<div class="shadowmeta">${esc(adultStudentType(r))}</div>`:''}<div class="shadowmeta">${esc(val(r,'AREA')||'Unassigned')} • ${esc(val(r,'STAFF ONBOARDING')||'Unassigned')}</div>${dateLine(r,g.step)}</div>`).join(''):'<div class="shadowmeta">No one at this step</div>'}</div>`}).join('');
+ const groups=[
+  {title:'BGC',step:'BGC'},
+  {title:'Serve HQ',step:'Serve HQ'},
+  {title:'Code of Conduct',step:'Code of Conduct'},
+  {title:'References Contacted',step:'References Contacted'}
+ ];
+ $('preShadowStages').innerHTML=groups.map(g=>{
+  let list=arr.filter(r=>onboardingStage(r)===g.step).sort((a,b)=>{
+   const aa=String(val(a,'AREA')||'Unassigned'),ba=String(val(b,'AREA')||'Unassigned');
+   return aa.localeCompare(ba)||nameOf(a).localeCompare(nameOf(b))
+  });
+  return `<div class="shadowcol"><div class="shadowhead"><div class="shadowtitle">${g.title}</div><div class="shadowcount">${list.length}</div></div>${list.length?list.map(r=>`<div class="shadowperson"><div class="shadowname">${esc(nameOf(r))}</div>${adultStudentType(r)?`<div class="shadowmeta">${esc(adultStudentType(r))}</div>`:''}<div class="shadowmeta">${esc(val(r,'AREA')||'Unassigned')} • ${esc(val(r,'STAFF ONBOARDING')||'Unassigned')}</div>${dateLine(r,g.step)}</div>`).join(''):'<div class="shadowmeta">No one at this step</div>'}</div>`
+ }).join('');
 }
 function renderShadowStages(arr){
-const groups=[
- {title:'Ready for Shadow 1',test:r=>completed(r,'Orientation Completed')&&!completed(r,'Shadow 1 Completed')},
- {title:'Ready for Shadow 2',test:r=>completed(r,'Shadow 1 Completed')&&!completed(r,'Shadow 2 Completed')},
- {title:'Ready for Shadow 3',test:r=>completed(r,'Shadow 2 Completed')&&!completed(r,'Shadow 3 Completed')},
- {title:'Shadowing Complete',test:r=>completed(r,'Shadow 3 Completed')}
-];
-$('shadowStages').innerHTML=groups.map(g=>{let list=arr.filter(g.test).sort((a,b)=>{const aa=String(val(a,'AREA')||'Unassigned'),ba=String(val(b,'AREA')||'Unassigned');return aa.localeCompare(ba)||nameOf(a).localeCompare(nameOf(b))});return `<div class="shadowcol"><div class="shadowhead"><div class="shadowtitle">${g.title}</div><div class="shadowcount">${list.length}</div></div>${list.length?list.map(r=>`<div class="shadowperson"><div class="shadowname">${esc(nameOf(r))}</div>${adultStudentType(r)?`<div class="shadowmeta">${esc(adultStudentType(r))}</div>`:''}<div class="shadowmeta" style="color:#d8bd68;margin-top:4px">Next Step: ${esc(nextStep(r))}</div><div class="shadowmeta">${esc(val(r,'AREA')||'Unassigned')} • ${esc(val(r,'STAFF ONBOARDING')||'Unassigned')}</div>${dateLine(r,g.title)}</div>`).join(''):'<div class="shadowmeta">No one at this stage</div>'}</div>`}).join('');
+ const groups=[
+  {title:'Ready for Shadow 1',stage:'Shadow 1'},
+  {title:'Ready for Shadow 2',stage:'Shadow 2'},
+  {title:'Ready for Shadow 3',stage:'Shadow 3'},
+  {title:'Shadowing Complete',stage:'Shadowing Complete'}
+ ];
+ $('shadowStages').innerHTML=groups.map(g=>{
+  let list=arr.filter(r=>onboardingStage(r)===g.stage).sort((a,b)=>{
+   const aa=String(val(a,'AREA')||'Unassigned'),ba=String(val(b,'AREA')||'Unassigned');
+   return aa.localeCompare(ba)||nameOf(a).localeCompare(nameOf(b))
+  });
+  return `<div class="shadowcol"><div class="shadowhead"><div class="shadowtitle">${g.title}</div><div class="shadowcount">${list.length}</div></div>${list.length?list.map(r=>`<div class="shadowperson"><div class="shadowname">${esc(nameOf(r))}</div>${adultStudentType(r)?`<div class="shadowmeta">${esc(adultStudentType(r))}</div>`:''}<div class="shadowmeta" style="color:#d8bd68;margin-top:4px">Next Step: ${esc(g.stage==='Shadowing Complete'?'Complete':g.stage)}</div><div class="shadowmeta">${esc(val(r,'AREA')||'Unassigned')} • ${esc(val(r,'STAFF ONBOARDING')||'Unassigned')}</div>${dateLine(r,g.title)}</div>`).join(''):'<div class="shadowmeta">No one at this stage</div>'}</div>`
+ }).join('');
 }
 function renderTable(){let q=$('search').value.toLowerCase(),af=$('areaFilter').value,sf=$('staffFilter').value;let list=people.filter(r=>{let a=String(val(r,'AREA')||'Unassigned'),s=String(val(r,'STAFF ONBOARDING')||'Unassigned'),n=nameOf(r);return(!af||a===af)&&(!sf||s===sf)&&(!q||`${n} ${a} ${s}`.toLowerCase().includes(q))});$('tbody').innerHTML=list.length?list.map(r=>{let p=progress(r),next=nextStep(r),done=next==='Complete';return `<tr><td><b>${esc(nameOf(r))}</b></td><td>${esc(val(r,'AREA')||'—')}</td><td>${esc(val(r,'ADULT / STUDENT')||val(r,'Column3')||'—')}</td><td>${esc(val(r,'STAFF ONBOARDING')||'Unassigned')}</td><td><span class="pill ${p.p===100?'green':''}">${p.p}%</span></td><td>${done?'<span class="pill green">Complete</span>':esc(next)}</td></tr>`}).join(''):'<tr><td colspan="6" class="empty">No matching records</td></tr>'}
 
