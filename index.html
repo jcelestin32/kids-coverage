@@ -1343,6 +1343,7 @@ function renderRoles(){
  let sf=$("service").value,af=$("area").value;
  let a=rows
    .filter(r=>(!sf||t(r.Service)===sf)&&(!af||t(r.Area)===af))
+   .filter(r=>!(n(r["Total Scheduled"])===0 && n(r["Total Needed"])===0))
    .sort((x,y)=>{
       if(!sf && !af){
         const rank=name=>{
