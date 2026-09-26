@@ -1378,24 +1378,12 @@ function renderRoles(){
       return t(x["Room / Role"]).localeCompare(t(y["Room / Role"]));
     });
 
- let lastService="",lastArea="";
  $("roles").innerHTML=a.map(r=>{
    let scheduled=n(r["Total Scheduled"]), needed=n(r["Total Needed"]), op=n(r["Open Spots"]);
    let status=op===0?"COVERED":op+" open";
-   let currentService=t(r.Service), currentArea=t(r.Area);
-   let serviceHead="",areaHead="";
-   if(currentService!==lastService){
-     serviceHead=`<div class="service-role-head">${esc(currentService)}</div>`;
-     lastService=currentService;
-     lastArea="";
-   }
-   if(currentArea!==lastArea){
-     areaHead=`<div class="area-subhead">${esc(currentArea)}</div>`;
-     lastArea=currentArea;
-   }
    let zeroScheduled=scheduled===0 && needed>=1;
    let roleClass=zeroScheduled?"zero-scheduled":(op===0?"covered":"");
-   return serviceHead+areaHead+`<div class="card role ${roleClass}"><div><b>${esc(r["Room / Role"])}</b><div class="small">${scheduled} / ${needed} scheduled</div></div><div class="yellow">${status}</div></div>`;
+   return `<div class="card role ${roleClass}"><div><b>${esc(r["Room / Role"])}</b><div class="small">${esc(t(r.Service))} • ${esc(t(r.Area))}</div><div class="small">${scheduled} / ${needed} scheduled</div></div><div class="yellow">${status}</div></div>`;
  }).join("")||'<div class="empty">No matching roles.</div>' 
 }
 $("file").addEventListener("change",async e=>{let f=e.target.files[0];if(!f)return;try{let wb=XLSX.read(await f.arrayBuffer(),{type:"array"});let sn=wb.SheetNames.find(x=>x.toLowerCase()==="coverage");if(!sn)throw Error("Coverage tab not found.");
