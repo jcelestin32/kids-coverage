@@ -1358,7 +1358,16 @@ function render(){
  }
  let att=Object.values(g).sort((a,b)=>areaRank(a.area)-areaRank(b.area)||a.area.localeCompare(b.area));
  $("attention").innerHTML=att.map(x=>{let filled=Math.max(0,x.needed-x.open),pp=pc(filled,x.needed);return `<div class="card ${x.open===0?"covered":""}"><div class="head"><div><b>${esc(x.area)}</b><div class="small">${x.needed} needed • ${x.open===0?"Covered":x.open+" open"}</div></div><span class="yellow">${pp}%</span></div><div class="mini"><div class="minibar" style="width:${pp}%"></div></div></div>`}).join("")||'<div class="empty">No area staffing data.</div>';
- fillSelect("service",services,"All services");fillSelect("area",[...new Set(rows.map(r=>t(r.Area)).filter(Boolean))].sort(),"All areas");renderRoles()
+ fillSelect("service",services,"All services");
+  const areaOrder=["Welcome Team","Babies","Toddlers","Preschool Red","Preschool Blue","Elementary","Preteen","Preschool LG","Elementary LG","Preteen LG"];
+  const areaValues=[...new Set(rows.map(r=>t(r.Area)).filter(Boolean))];
+  const cleanArea=x=>t(x).toLowerCase().replace(/[()]/g,"").replace(/\s+/g," ").trim();
+  areaValues.sort((a,b)=>{
+    const ai=areaOrder.findIndex(x=>cleanArea(x)===cleanArea(a));
+    const bi=areaOrder.findIndex(x=>cleanArea(x)===cleanArea(b));
+    return (ai<0?999:ai)-(bi<0?999:bi)||a.localeCompare(b);
+  });
+  fillSelect("area",areaValues,"All areas");renderRoles()
 }
 function renderRoles(){
  let sf=$("service").value,af=$("area").value;
