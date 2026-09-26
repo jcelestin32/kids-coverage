@@ -1186,6 +1186,19 @@ select{
 .service-role-head{margin:28px 0 8px;padding:11px 13px;border-radius:12px;background:rgba(215,173,72,.10);border:1px solid rgba(215,173,72,.24);color:#d7ad48;font-size:14px;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
 .service-role-head:first-child{margin-top:4px}
 @media(max-width:700px){.service-role-head{margin-top:24px;padding:10px 12px;font-size:13px}.service-role-head:first-child{margin-top:2px}}
+.service-mini-break{display:flex;align-items:center;gap:10px;margin:22px 2px 12px;color:#9b9b9b;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+.service-mini-break:before,.service-mini-break:after{content:"";height:1px;background:rgba(255,255,255,.13);flex:1}
+@media(max-width:700px){.service-mini-break{margin:20px 1px 11px;font-size:10px;gap:8px}}
+
+/* Collapsible Area Coverage */
+.area-details{margin-top:24px;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)}
+.area-details>summary{list-style:none;cursor:pointer;padding:16px 4px;display:flex;align-items:center;justify-content:space-between;gap:12px;color:#aaa;font-size:10px;font-weight:900;letter-spacing:.19em;text-transform:uppercase}
+.area-details>summary::-webkit-details-marker{display:none}
+.area-details>summary span{font-size:10px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--muted)}
+.area-details>summary:after{content:'+';font-size:18px;line-height:1;color:var(--accent);margin-left:8px}
+.area-details[open]>summary:after{content:'−'}
+.area-details-body{padding:0 0 14px}
+@media(max-width:700px){.area-details{margin-top:20px}.area-details>summary{padding:14px 2px;font-size:12px}.area-details>summary span{font-size:11px}}
 </style>
 <style>
 @media print {
@@ -1237,7 +1250,7 @@ select{
 <div class="section">Biggest Needs</div>
 <div class="priority" id="priorities"><div class="empty">Priority roles will appear here.</div></div>
 <details class="more-details"><summary>View Details <span>Service, area & role breakdowns</span></summary><div class="details-body"><div class="section">Service Coverage</div><div class="cards servicegrid" id="services"><div class="empty">Upload the workbook to begin.</div></div>
-<div class="section">Area Coverage</div><div class="cards" id="attention"><div class="empty">Area totals will appear here.</div></div>
+<details class="area-details"><summary>Area Coverage <span>View area totals</span></summary><div class="area-details-body"><div class="cards" id="attention"><div class="empty">Area totals will appear here.</div></div></div></details>
 <div class="section">This Sunday (Filters)</div><div class="filters"><select id="service"><option value="">All services</option></select><select id="area"><option value="">All areas</option></select></div>
 <div class="cards" id="roles"><div class="empty">Volunteer roles will appear here.</div></div></div></details><div class="footer">KIDS Weekly Coverage Dashboard</div>
 </main>
@@ -1378,13 +1391,18 @@ function renderRoles(){
       return t(x["Room / Role"]).localeCompare(t(y["Room / Role"]));
     });
 
- $("roles").innerHTML=a.map(r=>{
+ let lastService="";
+ let rolesHtml=a.map(r=>{
    let scheduled=n(r["Total Scheduled"]), needed=n(r["Total Needed"]), op=n(r["Open Spots"]);
    let status=op===0?"COVERED":op+" open";
    let zeroScheduled=scheduled===0 && needed>=1;
    let roleClass=zeroScheduled?"zero-scheduled":(op===0?"covered":"");
-   return `<div class="card role ${roleClass}"><div><b>${esc(r["Room / Role"])}</b><div class="small">${esc(t(r.Service))} • ${esc(t(r.Area))}</div><div class="small">${scheduled} / ${needed} scheduled</div></div><div class="yellow">${status}</div></div>`;
- }).join("")||'<div class="empty">No matching roles.</div>' 
+   let svc=t(r.Service);
+   let divider=(svc!==lastService && lastService!=="")?`<div class="service-mini-break"><span>${esc(svc)}</span></div>`:"";
+   lastService=svc;
+   return divider+`<div class="card role ${roleClass}"><div><b>${esc(r["Room / Role"])}</b><div class="small">${esc(svc)} • ${esc(t(r.Area))}</div><div class="small">${scheduled} / ${needed} scheduled</div></div><div class="yellow">${status}</div></div>`;
+ }).join("");
+ $("roles").innerHTML=rolesHtml||'<div class="empty">No matching roles.</div>' 
 }
 $("file").addEventListener("change",async e=>{let f=e.target.files[0];if(!f)return;try{let wb=XLSX.read(await f.arrayBuffer(),{type:"array"});let sn=wb.SheetNames.find(x=>x.toLowerCase()==="coverage");if(!sn)throw Error("Coverage tab not found.");
  let raw=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:""});let hi=raw.findIndex(r=>t(r[0])==="Area"&&t(r[1])==="Room / Role");if(hi<0)throw Error("Coverage headers not found.");
