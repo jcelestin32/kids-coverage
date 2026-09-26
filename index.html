@@ -1450,4 +1450,20 @@ function buildPrintSummary(){
 $("printBtn").addEventListener("click",()=>{if(buildPrintSummary())window.print()});
 
 $("service").addEventListener("change",renderRoles);$("area").addEventListener("change",renderRoles);
-</script></body></html>
+</script></body></html><style>
+/* Mobile: compact, centered Print Open Roles button */
+@media (max-width:700px){
+  .toolbar{
+    justify-content:center!important;
+  }
+  .print-btn{
+    width:auto!important;
+    min-height:0!important;
+    margin:4px auto 0!important;
+    padding:8px 14px!important;
+    font-size:12px!important;
+    line-height:1.2!important;
+    display:block!important;
+  }
+}
+</style>
